@@ -34,8 +34,8 @@
 
 ======================================================================================================================*/
 
-#ifndef CEDAR_TUTORIAL_SIMPLE_SUMMATION_H
-#define CEDAR_TUTORIAL_SIMPLE_SUMMATION_H
+#ifndef REWARD_PEAK_H
+#define REWARD_PEAK_H
 
 // CEDAR INCLUDES
 #include <cedar/processing/Step.h> // if we are going to inherit from cedar::proc::Step, we have to include the header
@@ -45,8 +45,6 @@
 #include <cedar/auxiliaries/DoubleParameter.h>
 #include <cedar/auxiliaries/StringParameter.h>
 #include <cedar/auxiliaries/IntParameter.h>
-#include "ros/ros.h"
-#include "std_msgs/Float64.h"
 
 // SYSTEM INCLUDES
 
@@ -54,7 +52,7 @@
  *
  * Seriously, I mean it!.
  */
-class RosPeak : public cedar::proc::Step
+class RewardPeak : public cedar::proc::Step
 {
   Q_OBJECT
   //--------------------------------------------------------------------------------------------------------------------
@@ -62,7 +60,7 @@ class RosPeak : public cedar::proc::Step
   //--------------------------------------------------------------------------------------------------------------------
 public:
   //!@brief The standard constructor.
-  RosPeak();
+  RewardPeak();
 
   //!@brief Destructor
 
@@ -85,7 +83,6 @@ protected:
 private:
   // The arguments are unused here
   void compute(const cedar::proc::Arguments&);
-  void chatterCallback(const std_msgs::Float64::ConstPtr& msg);
   void reset();
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -104,9 +101,6 @@ private:
   cedar::aux::StringParameterPtr mTopic;
   cedar::aux::DoubleParameterPtr mCenter;
 
-  std::string topicName;
-  ros::NodeHandle n;
-  ros::Subscriber sub;
   double sigma;
   double center;
   double pos;

@@ -48,10 +48,10 @@
 #endif // Q_MOC_RUN
 
 
-namespace RosPeak
+namespace RewardPeak
 {
   //!@cond SKIPPED_DOCUMENTATION
-  class RosPeak;
+  class RewardPeak;
   //class Talker;
   //!@endcond
 }

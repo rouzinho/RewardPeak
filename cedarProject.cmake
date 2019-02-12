@@ -95,19 +95,6 @@ if (NOT OpenCV_FOUND)
   message("Could not find opencv. You may experience problems linking to this library.")
 endif ()
 
-find_package(roscpp)
-if (roscpp_FOUND)
-   include_directories(${roscpp_INCLUDE_DIRS})
-endif()
-find_package(std_msgs)
-if (std_msgs_FOUND)
-   include_directories(${std_msgs_INCLUDE_DIRS})
-endif()
-find_package(genmsg)
-if (genmsg_FOUND)
-   include_directories(${genmsg_INCLUDE_DIRS})
-endif()
-
 
 
 

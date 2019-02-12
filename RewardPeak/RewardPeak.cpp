@@ -35,7 +35,7 @@
 ======================================================================================================================*/
 
 // CEDAR INCLUDES
-#include "RosPeak.h"
+#include "RewardPeak.h"
 #include <cedar/processing/ExternalData.h> // getInputSlot() returns ExternalData
 #include <cedar/auxiliaries/MatData.h> // this is the class MatData, used internally in this step
 #include "cedar/auxiliaries/math/functions.h"
@@ -45,7 +45,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // constructors and destructor
 //----------------------------------------------------------------------------------------------------------------------
-RosPeak::RosPeak()
+RewardPeak::RewardPeak()
 :
 cedar::proc::Step(true),
 mOutput(new cedar::aux::MatData(cv::Mat::zeros(1, 100, CV_32F))),
@@ -71,7 +71,7 @@ this->connect(this->mTopic.get(), SIGNAL(valueChanged()), this, SLOT(reName()));
 //----------------------------------------------------------------------------------------------------------------------
 // methods
 //----------------------------------------------------------------------------------------------------------------------
-void RosPeak::compute(const cedar::proc::Arguments&)
+void RewardPeak::compute(const cedar::proc::Arguments&)
 {
 
   //subscriber for the sensor
@@ -83,16 +83,12 @@ void RosPeak::compute(const cedar::proc::Arguments&)
   pos = pos * 100;
   */
 
-  ros::Rate loop_rate(98);
-  loop_rate.sleep();
-  ros::spinOnce();
-
   //change the Gaussian function with the value of the ear sensor.
   this->mOutput->setData(cedar::aux::math::gaussMatrix(1,mGaussMatrixSizes,dat,mGaussMatrixSigmas,mGaussMatrixCenters,true));
 
 }
 
-void RosPeak::reCompute()
+void RewardPeak::reCompute()
 {
    mGaussMatrixSizes.clear();
    mGaussMatrixSigmas.clear();
@@ -102,21 +98,13 @@ void RosPeak::reCompute()
 }
 
 
-void RosPeak::reName()
+void RewardPeak::reName()
 {
    topicName = this->mTopic->getValue();
    const std::string tname = topicName;
-   sub = n.subscribe(tname, 1000, &RosPeak::chatterCallback,this);
 }
 
-//callback for the subscriber. This one get the value of the sensor.
-void RosPeak::chatterCallback(const std_msgs::Float64::ConstPtr& msg)
-{
-   ROS_INFO("I heard: [%f]", msg->data);
-   dat = msg->data;
-}
-
-void RosPeak::reset()
+void RewardPeak::reset()
 {
 
 	//ros::shutdown();

@@ -42,19 +42,10 @@ include("cedarProject.cmake")
 
 # Use this to add targets; you can call this multiple times
 cedar_project_add_target(
-                         LIBRARY RosPeak # use this if you want to compile a library
+                         LIBRARY RewardPeak # use this if you want to compile a library
 #                          EXECUTABLE folder # use this if you want to compile an executable
 #                          TARGET_NAME TargetName # if you leave this out, it will be the same as the folder
-                          MOC_HEADERS RosPeak.h# specify this and a list of moc headers below if you have any
+                          MOC_HEADERS RewardPeak.h# specify this and a list of moc headers below if you have any
 #                          path/to/moc.h # relative to folder
 #                          DEPENDS_ON OtherTargetNames # specify if this target depends on others
                          )
-if (roscpp_FOUND)
- 	target_link_libraries(RosPeak ${roscpp_LIBRARIES})
-endif()
-if (std_msgs_FOUND)
- 	target_link_libraries(RosPeak ${std_msgs_LIBRARIES})
-endif()
-if (genmsg_FOUND)
- 	target_link_libraries(RosPeak ${genmsg_LIBRARIES})
-endif()
