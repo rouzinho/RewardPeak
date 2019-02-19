@@ -129,14 +129,14 @@ void RewardPeak::eulerStep(const cedar::unit::Time& time)
 {
   cv::Mat& RewardPeak = this->mActivation->getData();
   cedar::aux::ConstDataPtr input_motor = this->getInput("motor");
-  const cv::Mat& input_mot = input_motor->getData<cv::Mat>();
+  const cv::Mat& input_mat = input_motor->getData<cv::Mat>();
 
   cedar::aux::ConstDataPtr input_amplitude = this->getInput("amplitude");
   const cv::Mat& input_amp = input_amplitude->getData<cv::Mat>();
 
   const double& tau_build_up = this->_mTimeScaleBuildUp->getValue();
   const double& tau_decay = this->_mTimeScaleDecay->getValue();
-  cv::Mat sigmoided_input = this->_mSigmoid->getValue()->compute(input_mot);
+  cv::Mat sigmoided_input = this->_mSigmoid->getValue()->compute(input_mat);
   double peak = 1.0;
   /*
   if (auto peak_detector = boost::dynamic_pointer_cast<cedar::aux::ConstMatData>(this->getInput("peak detector")))
@@ -148,7 +148,7 @@ void RewardPeak::eulerStep(const cedar::unit::Time& time)
   RewardPeak +=
   (
     time / cedar::unit::Time(tau_build_up * cedar::unit::milli * cedar::unit::seconds)
-      * (-1.0 * RewardPeak + input_mot).mul(sigmoided_input)
+      * (-1.0 * RewardPeak + input_mat).mul(sigmoided_input)
     + time / cedar::unit::Time(tau_decay * cedar::unit::milli * cedar::unit::seconds)
       * (-1.0 * RewardPeak.mul((1.0 - sigmoided_input)))
   ) * peak;
@@ -255,5 +255,5 @@ void RewardPeak::updateMatrices()
   }
   this->unlockAll();
   this->revalidateInputSlot("motor");
-  this->emitOutputPropertiesChangedSignal("amplitude");
+  this->emitOutputPropertiesChangedSignal("activation");
 }
