@@ -1,38 +1,4 @@
-/*======================================================================================================================
 
-    Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017 Institut fuer Neuroinformatik, Ruhr-Universitaet Bochum, Germany
-
-    This file is part of cedar.
-
-    cedar is free software: you can redistribute it and/or modify it under
-    the terms of the GNU Lesser General Public License as published by the
-    Free Software Foundation, either version 3 of the License, or (at your
-    option) any later version.
-
-    cedar is distributed in the hope that it will be useful, but WITHOUT ANY
-    WARRANTY; without even the implied warranty of MERCHANTABILITY or
-    FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
-    License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with cedar. If not, see <http://www.gnu.org/licenses/>.
-
-========================================================================================================================
-
-    Institute:   Ruhr-Universitaet Bochum
-                 Institut fuer Neuroinformatik
-
-    File:        RewardPeak.cpp
-
-    Maintainer:  Stephan Zibner
-    Email:       stephan.zibner@ini.ruhr-uni-bochum.de
-    Date:        2011 11 08
-
-    Description:
-
-    Credits:
-
-======================================================================================================================*/
 
 // CEDAR INCLUDES
 #include "RewardPeak.h"
@@ -127,7 +93,7 @@ _mSigmoid
 
 void RewardPeak::eulerStep(const cedar::unit::Time& time)
 {
-  cv::Mat& RewardPeak = this->mActivation->getData();
+  cv::Mat& preshape = this->mActivation->getData();
   cedar::aux::ConstDataPtr input_motor = this->getInput("motor");
   const cv::Mat& input_mat = input_motor->getData<cv::Mat>();
 
@@ -145,12 +111,12 @@ void RewardPeak::eulerStep(const cedar::unit::Time& time)
   }*/
 
   // one possible RewardPeak dynamic
-  RewardPeak +=
+  preshape +=
   (
     time / cedar::unit::Time(tau_build_up * cedar::unit::milli * cedar::unit::seconds)
-      * (-1.0 * RewardPeak + input_mat).mul(sigmoided_input)
+      * (-1.0 * preshape + input_mat).mul(sigmoided_input)
     + time / cedar::unit::Time(tau_decay * cedar::unit::milli * cedar::unit::seconds)
-      * (-1.0 * RewardPeak.mul((1.0 - sigmoided_input)))
+      * (-1.0 * preshape.mul((1.0 - sigmoided_input)))
   ) * peak;
 }
 
