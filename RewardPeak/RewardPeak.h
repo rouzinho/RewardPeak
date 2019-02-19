@@ -1,6 +1,6 @@
 /*======================================================================================================================
 
-    Copyright 2011, 2012, 2013, 2014, 2015 Institut fuer Neuroinformatik, Ruhr-Universitaet Bochum, Germany
+    Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017 Institut fuer Neuroinformatik, Ruhr-Universitaet Bochum, Germany
 
     This file is part of cedar.
 
@@ -22,11 +22,11 @@
     Institute:   Ruhr-Universitaet Bochum
                  Institut fuer Neuroinformatik
 
-    File:        RosPeak.h
+    File:        RewardPeak.h
 
-    Maintainer:  Tutorial Writer Person
-    Email:       cedar@ini.rub.de
-    Date:        2011 12 09
+    Maintainer:  Stephan Zibner
+    Email:       stephan.zibner@ini.ruhr-uni-bochum.de
+    Date:        2011 11 08
 
     Description:
 
@@ -34,27 +34,42 @@
 
 ======================================================================================================================*/
 
-#ifndef REWARD_PEAK_H
-#define REWARD_PEAK_H
+#ifndef RewardPeak_H
+#define RewardPeak_H
 
 // CEDAR INCLUDES
-#include <cedar/processing/Step.h> // if we are going to inherit from cedar::proc::Step, we have to include the header
+#include "cedar/dynamics/Dynamics.h"
+#include "cedar/auxiliaries/math/Sigmoid.h"
+#include "cedar/auxiliaries/DoubleParameter.h"
+#include "cedar/auxiliaries/UIntParameter.h"
+#include "cedar/auxiliaries/UIntVectorParameter.h"
+#include "cedar/auxiliaries/ObjectParameterTemplate.h"
 
 // FORWARD DECLARATIONS
-#include <cedar/auxiliaries/MatData.fwd.h>
-#include <cedar/auxiliaries/DoubleParameter.h>
-#include <cedar/auxiliaries/StringParameter.h>
-#include <cedar/auxiliaries/IntParameter.h>
+#include "cedar/auxiliaries/MatData.fwd.h"
+//#include "RewardPeak.fwd.h"
 
 // SYSTEM INCLUDES
 
-/*!@brief The tutorial code should look like this..
- *
- * Seriously, I mean it!.
+
+/*!@brief A step that implements RewardPeak dynamics.
  */
-class RewardPeak : public cedar::proc::Step
+class RewardPeak : public cedar::dyn::Dynamics
 {
+  //--------------------------------------------------------------------------------------------------------------------
+  // macros
+  //--------------------------------------------------------------------------------------------------------------------
   Q_OBJECT
+
+  //--------------------------------------------------------------------------------------------------------------------
+  // nested types
+  //--------------------------------------------------------------------------------------------------------------------
+  //!@brief a parameter for sigmoid objects
+  typedef cedar::aux::ObjectParameterTemplate<cedar::aux::math::TransferFunction> SigmoidParameter;
+  //!@cond SKIPPED_DOCUMENTATION
+  CEDAR_GENERATE_POINTER_TYPES_INTRUSIVE(SigmoidParameter);
+  //!@endcond
+
   //--------------------------------------------------------------------------------------------------------------------
   // constructors and destructor
   //--------------------------------------------------------------------------------------------------------------------
@@ -67,55 +82,77 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   // public methods
   //--------------------------------------------------------------------------------------------------------------------
+public:
+  //!@brief determine if a given Data is a valid input to the field
+  cedar::proc::DataSlot::VALIDITY determineInputValidity
+                                  (
+                                    cedar::proc::ConstDataSlotPtr,
+                                    cedar::aux::ConstDataPtr
+                                  ) const;
+
+  void resetRewardPeak();
+
 public slots:
-  // none yet
-  void reCompute();
-  void reName();
+  //!@brief handle a change in dimensionality, which leads to creating new matrices
+  void dimensionalityChanged();
+  //!@brief handle a change in size along dimensions, which leads to creating new matrices
+  void dimensionSizeChanged();
+
+  void resetMemory();
+
   //--------------------------------------------------------------------------------------------------------------------
   // protected methods
   //--------------------------------------------------------------------------------------------------------------------
 protected:
-  // none yet
+  /*!@brief compute the euler step of the RewardPeak dynamics
+   *
+   * This is the equation:
+   * \f[
+   *
+   * \f]
+   */
+  void eulerStep(const cedar::unit::Time& time);
 
   //--------------------------------------------------------------------------------------------------------------------
   // private methods
   //--------------------------------------------------------------------------------------------------------------------
 private:
-  // The arguments are unused here
-  void compute(const cedar::proc::Arguments&);
-  void reset();
+  //!@brief update the size and dimensionality of internal matrices
+  void updateMatrices();
+
+  //!@brief check if input fits to field in dimension and size
+  bool isMatrixCompatibleInput(const cv::Mat& matrix) const;
+
+
 
   //--------------------------------------------------------------------------------------------------------------------
   // members
   //--------------------------------------------------------------------------------------------------------------------
 protected:
-  // none yet
-private:
-  //!@brief this is the output of the computation (in this case, the summed inputs)
-  cedar::aux::MatDataPtr mOutput;
-  std::vector<unsigned int> mGaussMatrixSizes;
-  std::vector<double> mGaussMatrixSigmas;
-  std::vector<double> mGaussMatrixCenters;
-  cedar::aux::IntParameterPtr mSize;
-  cedar::aux::DoubleParameterPtr mSigma;
-  cedar::aux::StringParameterPtr mTopic;
-  cedar::aux::DoubleParameterPtr mCenter;
+  //!@brief this SpaceCode matrix contains the current field activity of the NeuralField
+  cedar::aux::MatDataPtr mActivation;
 
-  double sigma;
-  double center;
-  double pos;
-  int size;
-  double dat;
+private:
+  // none yet
 
   //--------------------------------------------------------------------------------------------------------------------
   // parameters
   //--------------------------------------------------------------------------------------------------------------------
 protected:
-  // none yet
+  //!@brief the field dimensionality - may range from 1 to 16 in principle, but more like 6 or 7 in reality
+  cedar::aux::UIntParameterPtr _mDimensionality;
+  //!@brief the field sizes in each dimension
+  cedar::aux::UIntVectorParameterPtr _mSizes;
+  //!@brief time scale build up
+  cedar::aux::DoubleParameterPtr _mTimeScaleBuildUp;
+  //!@brief time scale decay
+  cedar::aux::DoubleParameterPtr _mTimeScaleDecay;
 
+  //! Sigmoid applied to the input.
+  SigmoidParameterPtr _mSigmoid;
 private:
   // none yet
 
-}; // class RosPeak
+}; // class cedar::dyn::RewardPeak
 
-#endif // CEDAR_TUTORIAL_SIMPLE_SUMMATION_H
+#endif // CEDAR_DYN_RewardPeak_H
