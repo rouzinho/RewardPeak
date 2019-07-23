@@ -16,13 +16,17 @@ RewardPeak::RewardPeak()
 :
 cedar::proc::Step(true),
 mOutput(new cedar::aux::MatData(cv::Mat::zeros(1, 100, CV_32F))),
-mSize(new cedar::aux::IntParameter(this, "Size",100)),
-mValue(new cedar::aux::DoubleParameter(this, "Amplitude",0.0)),
-mSigma(new cedar::aux::DoubleParameter(this,"Sigma",3.0))
+mSize(new cedar::aux::IntParameter(this, "size",100)),
+mAmplifier(new cedar::aux::DoubleParameter(this, "amplifier",1.0)),
+mSigma(new cedar::aux::DoubleParameter(this,"sigma",3.0))
 {
 this->declareOutput("output", mOutput);
 this->declareInput("motor",true);
 this->declareInput("amplitude",false);
+
+size = 100;
+value = 1.0;
+amplifier = 1.0;
 
 mGaussMatrixSizes.push_back(100);
 mGaussMatrixSigmas.push_back(3.0);
@@ -30,7 +34,7 @@ mGaussMatrixCenters.push_back(25.0);
 
 this->connect(this->mSize.get(), SIGNAL(valueChanged()), this, SLOT(reCompute()));
 this->connect(this->mSigma.get(), SIGNAL(valueChanged()), this, SLOT(reCompute()));
-this->connect(this->mValue.get(), SIGNAL(valueChanged()), this, SLOT(reCompute()));
+this->connect(this->mAmplifier.get(), SIGNAL(valueChanged()), this, SLOT(reCompute()));
 
 
 }
@@ -49,8 +53,8 @@ void RewardPeak::compute(const cedar::proc::Arguments&)
    cedar::aux::ConstDataPtr input_amplitude = this->getInput("amplitude");
    const cv::Mat& input_amp = input_amplitude->getData<cv::Mat>();
    float t2 = input_amp.at<float>(0);
-   amp = static_cast<double> (t2);
-   amp = amp + value;
+   value = static_cast<double> (t2);
+   value = amplifier * value;
 
    mGaussMatrixSizes.clear();
    mGaussMatrixCenters.clear();
@@ -58,7 +62,7 @@ void RewardPeak::compute(const cedar::proc::Arguments&)
    mGaussMatrixCenters.push_back(pos);
 
    //change the Gaussian function with the value of the sensor.
-   this->mOutput->setData(cedar::aux::math::gaussMatrix(1,mGaussMatrixSizes,amp,mGaussMatrixSigmas,mGaussMatrixCenters,true));
+   this->mOutput->setData(cedar::aux::math::gaussMatrix(1,mGaussMatrixSizes,value,mGaussMatrixSigmas,mGaussMatrixCenters,true));
 
 }
 
@@ -69,7 +73,7 @@ void RewardPeak::reCompute()
    size = static_cast<int>(this->mSize->getValue());
    mGaussMatrixSizes.push_back(size);
    mGaussMatrixSigmas.push_back(static_cast<double>(this->mSigma->getValue()));
-   value = static_cast<double>(this->mValue->getValue());
+   amplifier = static_cast<double>(this->mAmplifier->getValue());
 }
 
 //callback for the subscriber. This one get the value of the sensor.

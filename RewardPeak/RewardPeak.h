@@ -96,7 +96,7 @@ private:
   std::vector<double> mGaussMatrixSigmas;
   std::vector<double> mGaussMatrixCenters;
   cedar::aux::IntParameterPtr mSize;
-  cedar::aux::DoubleParameterPtr mValue;
+  cedar::aux::DoubleParameterPtr mAmplifier;
   cedar::aux::DoubleParameterPtr mSigma;
 
   double sigma;
@@ -104,7 +104,7 @@ private:
   double pos;
   int size;
   double value;
-  double amp;
+  double amplifier;
 
   //--------------------------------------------------------------------------------------------------------------------
   // parameters
