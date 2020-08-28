@@ -22,12 +22,19 @@ You can't use a precompiled version of Cedar to compile and run the plugin.
 
 I suggest reading about how to create a plugin in Cedar first, it will greatly help to understand how it works : https://cedar.ini.rub.de/tutorials/writing_custom_code_for_cedar/
 
+**INSTALL YARP**
+
+This last version of the plugin requires yarp (cedar built with yarp support - you don't have to do$
+
+https://www.yarp.it/install.html
+
+If you don't need it, remove the find_package(YARP REQUIRED) in the cedarProject.cmake
 
 ### Installing
 
 First clone the repository :
 
-`git clone https://github.com/rouzinho/EarListenerDft.git`
+`git clone https://github.com/rouzinho/RewardPeak.git`
 
 In the project.conf, change the CEDAR_HOME directory to your own :
 
@@ -45,7 +52,7 @@ Finally start the compilation :
 
 `make`
 
-You should see the plugin under the name libEarListener.so in the build/ repository
+You should see the plugin under the name libRewardPeak.so in the build/ repository
 
 
 ## Run the plugin
@@ -54,7 +61,7 @@ Execute cedar and load it into cedar
 
 *Tools -> Manage plugins*
 
-In the plugin Manager window, click on *add* and choose the plugin libReward.so. This one should appear in the window.
+In the plugin Manager window, click on *add* and choose the plugin libRewardPeak.so. This one should appear in the window.
 
 You can close the window. The plugin is loaded inside cedar.
 
